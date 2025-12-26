@@ -1,9 +1,11 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// We create a factory function to ensure we always use the latest environment variables
+const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const generateAdCopy = async (businessName: string, description: string, goal: string) => {
+  const ai = getAiClient();
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: `Generate 3 high-converting ad headlines (max 40 chars) and 3 ad descriptions (max 90 chars) for a business named "${businessName}". 
@@ -32,6 +34,7 @@ export const generateAdCopy = async (businessName: string, description: string, 
 };
 
 export const askRuth = async (userMessage: string, chatHistory: {role: 'user' | 'model', parts: {text: string}[]}[]) => {
+  const ai = getAiClient();
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: [

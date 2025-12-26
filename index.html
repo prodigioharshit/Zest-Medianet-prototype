@@ -4,34 +4,364 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zest | Self-Serve Ads</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-      // Polyfill process.env for browser compatibility
-      window.process = window.process || { env: {} };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        indigo: { 50: '#f5f7ff', 100: '#ebf0fe', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#1e1b4b' }
+                    }
+                }
+            }
+        }
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Hide scrollbars for a cleaner app feel */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-header { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        canvas#snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom": "https://esm.sh/react-dom@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
-  }
-}
-</script>
 </head>
-<body class="bg-slate-50 text-slate-900">
-    <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
+
+    <canvas id="snow-canvas"></canvas>
+
+    <div id="root" class="flex h-screen relative z-10 overflow-hidden">
+        <aside class="w-72 bg-slate-900 text-slate-300 hidden md:flex flex-col relative z-20">
+            <div class="p-8 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="zap" class="text-white"></i>
+                    </div>
+                    <span class="text-2xl font-black tracking-tighter text-white">Zest</span>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-6 space-y-2">
+                <button onclick="window.state.setView('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all hover:bg-slate-800">
+                    <i data-lucide="layout-dashboard"></i><span class="font-semibold text-sm">Ad Performance</span>
+                </button>
+                <button onclick="window.state.setView('create-campaign')" id="nav-create-campaign" class="nav-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all hover:bg-slate-800">
+                    <i data-lucide="plus-circle"></i><span class="font-semibold text-sm">New Campaign</span>
+                </button>
+                <button onclick="window.state.setView('analytics')" id="nav-analytics" class="nav-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all hover:bg-slate-800">
+                    <i data-lucide="bar-chart-3"></i><span class="font-semibold text-sm">Analytics</span>
+                </button>
+                <button onclick="window.state.setView('faq')" id="nav-faq" class="nav-btn w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all hover:bg-slate-800">
+                    <i data-lucide="help-circle"></i><span class="font-semibold text-sm">Help & FAQ</span>
+                </button>
+            </nav>
+
+            <div class="px-6 py-5 border-t border-slate-800 space-y-4">
+                <button onclick="window.state.setView('community')" class="w-full flex items-center gap-4 px-4 py-1.5 text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="users"></i><span class="text-xs font-semibold">Community</span>
+                </button>
+                <button onclick="window.state.setView('settings')" class="w-full flex items-center gap-4 px-4 py-1.5 text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="settings"></i><span class="text-xs font-semibold">Settings</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <header class="h-20 border-b border-slate-100 glass-header flex items-center justify-between px-10 shrink-0 relative z-40">
+                <h1 id="view-title" class="text-xl font-bold text-slate-800 capitalize tracking-tight">Ad Performance</h1>
+                <div class="flex items-center gap-6">
+                    <div class="hidden sm:flex bg-white px-3 py-1.5 rounded-full border border-slate-100 items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Budget Balance</span>
+                        <span class="text-sm font-bold text-slate-700">$1,240.50</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 border-2 border-indigo-50 flex items-center justify-center text-indigo-700 font-bold">DP</div>
+                </div>
+            </header>
+
+            <div id="main-content" class="flex-1 overflow-y-auto p-8 pb-32 scrollbar-hide">
+                </div>
+        </main>
+
+        <div id="ruth-window" class="fixed bottom-28 right-8 w-96 h-[580px] bg-white rounded-[40px] shadow-2xl border border-slate-100 flex flex-col overflow-hidden transition-all duration-500 z-[998] scale-0 opacity-0 origin-bottom-right">
+            <div class="p-6 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-500 rounded-2xl flex items-center justify-center"><i data-lucide="sparkles" size="20"></i></div>
+                    <h3 class="font-black text-sm">Ruth</h3>
+                </div>
+                <button onclick="window.state.toggleRuth()"><i data-lucide="x" class="text-slate-400"></i></button>
+            </div>
+            <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+                <div class="flex justify-start"><div class="max-w-[85%] p-4 rounded-3xl bg-slate-50 text-slate-700 border rounded-tl-none text-sm">Hi Deep! I'm Ruth, your Personal Ad Manager. How can I help you grow today?</div></div>
+            </div>
+            <div class="p-6 border-t border-slate-50">
+                <div class="relative">
+                    <input type="text" id="chat-input" placeholder="Ask Ruth..." class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/10">
+                    <button onclick="window.state.sendMessage()" class="absolute right-2 top-2 p-3 bg-indigo-600 text-white rounded-xl shadow-lg"><i data-lucide="send" size="18"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <button onclick="window.state.toggleRuth()" class="fixed bottom-8 right-8 w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-[999] group">
+            <i data-lucide="message-square" class="text-white" size="28"></i>
+        </button>
+    </div>
+
+    <script>
+        // 1. Define State immediately
+        window.state = {
+            activeView: 'dashboard',
+            wizardStep: 1,
+            isRuthOpen: false,
+            campaigns: [
+                { id: '1', name: 'Spring Promo', goal: 'Conversions', status: 'active', budget: 150, spent: 4200, ctr: 2.75, cpc: 3.38 },
+                { id: '2', name: 'Waitlist Retarget', goal: 'Awareness', status: 'active', budget: 50, spent: 850, ctr: 0.36, cpc: 2.65 }
+            ],
+
+            setView: function(view) {
+                this.activeView = view;
+                
+                // Update Title
+                const titleEl = document.getElementById('view-title');
+                if(titleEl) {
+                    if(view === 'dashboard') titleEl.textContent = 'Ad Performance';
+                    else titleEl.textContent = view.replace('-', ' ');
+                }
+                
+                // Update Navigation Styling
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active', 'bg-indigo-600', 'text-white'));
+                const activeBtn = document.getElementById(`nav-${view}`);
+                if (activeBtn) activeBtn.classList.add('nav-active', 'bg-indigo-600', 'text-white');
+                
+                this.render();
+            },
+
+            render: function() {
+                const container = document.getElementById('main-content');
+                if(!container) return;
+                
+                container.innerHTML = '';
+                
+                if (this.activeView === 'dashboard') this.renderDashboard(container);
+                else if (this.activeView === 'create-campaign') this.renderWizard(container);
+                else if (this.activeView === 'faq') this.renderFAQ(container);
+                else if (this.activeView === 'analytics') this.renderAnalytics(container);
+                else container.innerHTML = `<div class="flex flex-col items-center justify-center h-[60vh] text-slate-400 font-bold">Module under development...</div>`;
+                
+                // Refresh Icons
+                if(window.lucide) {
+                    lucide.createIcons();
+                }
+            },
+
+            renderDashboard: function(container) {
+                container.innerHTML = `
+                    <div class="space-y-8 animate-in fade-in duration-500">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            ${this.statCard('Revenue', '$12,450', 'dollar-sign', 'indigo')}
+                            ${this.statCard('CTR', '2.45%', 'percent', 'emerald')}
+                            ${this.statCard('ROI', '3.8x', 'target', 'blue')}
+                            ${this.statCard('Conversions', '1,162', 'trending-up', 'amber')}
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm h-[400px]">
+                                <canvas id="dashboardChart"></canvas>
+                            </div>
+                            <div class="bg-slate-900 text-white p-8 rounded-[40px] shadow-xl flex flex-col justify-between">
+                                <h3 class="font-bold flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-indigo-400"></i> Channel Mix</h3>
+                                <div class="space-y-6">
+                                    ${this.progressItem('Meta Ads', 65, 'bg-indigo-500')}
+                                    ${this.progressItem('Google Ads', 20, 'bg-rose-500')}
+                                    ${this.progressItem('Zest Exchange', 15, 'bg-emerald-500')}
+                                </div>
+                                <button class="w-full py-4 bg-indigo-600 rounded-2xl font-black mt-8 shadow-lg shadow-indigo-900/50">Manage Budgets</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // Wait for DOM then draw chart
+                setTimeout(() => this.initDashboardChart(), 0);
+            },
+
+            renderWizard: function(container) {
+                const steps = ['Strategy', 'Creative', 'Targeting', 'Budget', 'Deploy'];
+                container.innerHTML = `
+                    <div class="max-w-4xl mx-auto py-4 animate-in fade-in duration-500">
+                        <div class="flex justify-between items-center mb-10 px-6">
+                            ${steps.map((s, i) => `
+                                <div class="flex-1 flex items-center">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ${this.wizardStep >= i+1 ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-200 text-slate-400'}">${i+1}</div>
+                                    ${i < 4 ? `<div class="flex-1 h-0.5 mx-4 ${this.wizardStep > i+1 ? 'bg-indigo-600' : 'bg-slate-200'}"></div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="bg-white rounded-[48px] border border-slate-100 shadow-2xl p-12 min-h-[500px] flex flex-col justify-between">
+                            <div id="step-content" class="text-center space-y-8">
+                                ${this.renderStepContent()}
+                            </div>
+                            <div class="flex justify-between items-center pt-10 border-t border-slate-50">
+                                <button onclick="window.state.prevStep()" class="px-8 py-4 rounded-2xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 ${this.wizardStep === 1 ? 'opacity-0 pointer-events-none' : ''}">Back</button>
+                                <button onclick="window.state.nextStep()" class="px-10 py-4 rounded-2xl bg-indigo-600 text-white font-black shadow-xl shadow-indigo-100">${this.wizardStep === 5 ? 'Launch Campaign' : 'Continue'}</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderStepContent: function() {
+                if (this.wizardStep === 1) return `
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Define Your Objective</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                        <div class="p-8 border-2 border-indigo-600 bg-indigo-50/30 rounded-[32px] text-left">
+                            <i data-lucide="zap" class="text-indigo-600 mb-6" size="32"></i>
+                            <h3 class="font-black text-xl mb-2">Performance</h3>
+                            <p class="text-sm text-slate-500">Optimized for high-intent sales.</p>
+                        </div>
+                        <div class="p-8 border-2 border-slate-100 hover:border-indigo-200 rounded-[32px] text-left transition-all">
+                            <i data-lucide="target" class="text-slate-400 mb-6" size="32"></i>
+                            <h3 class="font-black text-xl mb-2">Traffic</h3>
+                            <p class="text-sm text-slate-500">Maximum site visitors.</p>
+                        </div>
+                        <div class="p-8 border-2 border-slate-100 hover:border-indigo-200 rounded-[32px] text-left transition-all">
+                            <i data-lucide="globe" class="text-slate-400 mb-6" size="32"></i>
+                            <h3 class="font-black text-xl mb-2">Awareness</h3>
+                            <p class="text-sm text-slate-500">Spread brand visibility.</p>
+                        </div>
+                    </div>
+                `;
+                return `<div class="py-20 text-slate-400 font-bold">Step in development...</div>`;
+            },
+
+            renderFAQ: function(container) {
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto space-y-8 animate-in fade-in">
+                        <h2 class="text-3xl font-black text-center">Help & FAQ</h2>
+                        <div class="bg-white rounded-[40px] border border-slate-100 shadow-xl overflow-hidden">
+                             <div class="p-8 border-b border-slate-50"><h3 class="font-bold">What is Zest?</h3><p class="text-slate-500">AI Ad Manager for SMBs.</p></div>
+                             <div class="p-8"><h3 class="font-bold">How does billing work?</h3><p class="text-slate-500">You are billed monthly based on ad spend.</p></div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderAnalytics: function(container) {
+                container.innerHTML = `
+                    <div class="space-y-10 animate-in fade-in">
+                        <h2 class="text-3xl font-black">Growth Analytics</h2>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="bg-white p-10 rounded-[40px] border border-slate-100 h-[450px]"><canvas id="analyticsChart1"></canvas></div>
+                            <div class="bg-white p-10 rounded-[40px] border border-slate-100 h-[450px] flex items-center justify-center"><canvas id="analyticsChart2"></canvas></div>
+                        </div>
+                    </div>
+                `;
+                setTimeout(() => this.initAnalyticsCharts(), 0);
+            },
+
+            nextStep: function() { if (this.wizardStep < 5) { this.wizardStep++; this.render(); } else { this.setView('dashboard'); } },
+            prevStep: function() { if (this.wizardStep > 1) { this.wizardStep--; this.render(); } },
+
+            statCard: function(label, val, icon, color) {
+                return `
+                    <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 rounded-2xl bg-${color}-50 text-${color}-600"><i data-lucide="${icon}" size="22"></i></div>
+                            <span class="text-emerald-500 text-[10px] font-black bg-emerald-50 px-2 py-1 rounded-lg uppercase tracking-tighter">+12%</span>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">${label}</p>
+                        <h3 class="text-3xl font-black text-slate-800 tracking-tight">${val}</h3>
+                    </div>
+                `;
+            },
+
+            progressItem: function(label, val, color) {
+                return `
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-bold"><span>${label}</span><span>${val}%</span></div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="${color} h-full" style="width: ${val}%"></div></div>
+                    </div>
+                `;
+            },
+
+            initDashboardChart: function() {
+                const ctx = document.getElementById('dashboardChart');
+                if (!ctx || !window.Chart) return;
+                
+                // Destroy old chart instance if exists (to prevent glitches)
+                if(window.dashChartInstance) window.dashChartInstance.destroy();
+
+                window.dashChartInstance = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['May 1', 'May 2', 'May 3', 'May 4', 'May 5', 'May 6', 'May 7'],
+                        datasets: [{ label: 'Reach', data: [4000, 3000, 2000, 2780, 1890, 2390, 3490], borderColor: '#6366f1', borderWidth: 4, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.1)' }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: false }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8' } } } }
+                });
+            },
+
+            initAnalyticsCharts: function() {
+                const c1 = document.getElementById('analyticsChart1');
+                const c2 = document.getElementById('analyticsChart2');
+                if (!c1 || !c2 || !window.Chart) return;
+
+                new Chart(c1.getContext('2d'), { type: 'bar', data: { labels: ['Meta', 'Google', 'Zest'], datasets: [{ label: 'Impressions', data: [12000, 8000, 5000], backgroundColor: '#6366f1', borderRadius: 12 }] }, options: { maintainAspectRatio: false } });
+                new Chart(c2.getContext('2d'), { type: 'doughnut', data: { labels: ['ROI', 'CAC', 'LTV'], datasets: [{ data: [60, 20, 20], backgroundColor: ['#6366f1', '#f43f5e', '#10b981'] }] }, options: { maintainAspectRatio: false, cutout: '70%' } });
+            },
+
+            toggleRuth: function() {
+                const win = document.getElementById('ruth-window');
+                this.isRuthOpen = !this.isRuthOpen;
+                if (this.isRuthOpen) { win.classList.remove('scale-0', 'opacity-0'); win.classList.add('scale-100', 'opacity-100'); }
+                else { win.classList.add('scale-0', 'opacity-0'); win.classList.remove('scale-100', 'opacity-100'); }
+            },
+
+            sendMessage: function() {
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if (!text) return;
+
+                const history = document.getElementById('chat-history');
+                history.innerHTML += `<div class="flex justify-end"><div class="max-w-[85%] p-4 rounded-3xl bg-indigo-600 text-white rounded-tr-none text-sm shadow-lg">${text}</div></div>`;
+                input.value = '';
+                history.scrollTop = history.scrollHeight;
+
+                setTimeout(() => {
+                    const fakeResponse = "I'm currently in demo mode, but I can see you're interested in '" + text + "'.";
+                    history.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] p-4 rounded-3xl bg-slate-50 text-slate-700 border rounded-tl-none text-sm animate-pulse">${fakeResponse}</div></div>`;
+                    history.scrollTop = history.scrollHeight;
+                }, 1000);
+            }
+        };
+
+        // 2. Initialize App when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.state.setView('dashboard');
+            if(window.lucide) lucide.createIcons();
+            
+            // Snow Effect (Optimized)
+            const canvas = document.getElementById('snow-canvas');
+            if(canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+                window.addEventListener('resize', resize);
+                resize();
+                for (let i = 0; i < 50; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 2 + 1, d: Math.random() * 100, v: Math.random() * 0.5 + 0.2 });
+                const draw = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+                    particles.forEach(p => {
+                        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+                        p.y += p.v; p.x += Math.sin(p.d) * 0.5;
+                        if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+                    });
+                    requestAnimationFrame(draw);
+                };
+                draw();
+            }
+        });
+    </script>
 </body>
 </html>

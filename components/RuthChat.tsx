@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, X, Sparkles, Zap, TrendingUp, Target, Minimize2 } from 'lucide-react';
-import { askRuth } from '../services/geminiService';
+import { askRuth } from '../services/geminiService.ts';
 
 interface Message {
   id: string;
@@ -76,7 +76,6 @@ const RuthChat: React.FC = () => {
 
   return (
     <>
-      {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-8 right-8 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 z-[999] group ${
@@ -92,20 +91,11 @@ const RuthChat: React.FC = () => {
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-indigo-600 rounded-full"></span>
           </div>
         )}
-        
-        {/* Hover Label */}
-        {!isOpen && (
-          <div className="absolute right-20 bg-white px-4 py-2 rounded-xl shadow-xl border border-slate-100 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
-            <span className="text-xs font-black text-slate-800 uppercase tracking-widest">Chat with Ruth</span>
-          </div>
-        )}
       </button>
 
-      {/* Chat Interface */}
       <div className={`fixed bottom-28 right-8 w-96 h-[580px] bg-white rounded-[40px] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.15)] border border-slate-100 flex flex-col overflow-hidden transition-all duration-500 z-[998] origin-bottom-right ${
         isOpen ? 'scale-100 opacity-100' : 'scale-75 opacity-0 invisible'
       }`}>
-        {/* Header */}
         <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -113,10 +103,6 @@ const RuthChat: React.FC = () => {
             </div>
             <div>
               <h3 className="font-black text-sm tracking-tight">Ruth</h3>
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Ad Manager</span>
-              </div>
             </div>
           </div>
           <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
@@ -124,7 +110,6 @@ const RuthChat: React.FC = () => {
           </button>
         </div>
 
-        {/* Messages Area */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -153,23 +138,7 @@ const RuthChat: React.FC = () => {
           )}
         </div>
 
-        {/* Footer Area */}
         <div className="p-6 border-t border-slate-50 space-y-4">
-          {messages.length === 1 && (
-            <div className="flex flex-wrap gap-2">
-              {QuickActions.map((action, i) => (
-                <button 
-                  key={i}
-                  onClick={() => setInput(action.label)}
-                  className="px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all flex items-center gap-1.5"
-                >
-                  <action.icon size={10} />
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          )}
-
           <div className="relative">
             <input
               type="text"
@@ -187,7 +156,6 @@ const RuthChat: React.FC = () => {
               <Send size={18} />
             </button>
           </div>
-          <p className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest">Ruth leverages Gemini 3 AI Intelligence</p>
         </div>
       </div>
     </>

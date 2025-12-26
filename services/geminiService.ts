@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 // We create a factory function to ensure we always use the latest environment variables
-const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateAdCopy = async (businessName: string, description: string, goal: string) => {
   const ai = getAiClient();

@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import Layout from './components/Layout';
-import Dashboard from './components/Dashboard';
-import CampaignWizard from './components/CampaignWizard';
-import FAQ from './components/FAQ';
-import Analytics from './components/Analytics';
-import Community from './components/Community';
-import { View } from './types';
+import Layout from './components/Layout.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import CampaignWizard from './components/CampaignWizard.tsx';
+import FAQ from './components/FAQ.tsx';
+import Analytics from './components/Analytics.tsx';
+import Community from './components/Community.tsx';
+import { View } from './types.ts';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('dashboard');

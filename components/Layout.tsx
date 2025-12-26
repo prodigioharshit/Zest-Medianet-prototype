@@ -1,9 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { LayoutDashboard, PlusCircle, BarChart3, Settings, Bell, Zap, Globe, HelpCircle, Users, X, Info, AlertTriangle, MessageSquare, Activity, ShieldCheck, Clock, User, CreditCard, LogOut, ChevronRight, Mail, CheckCircle2 } from 'lucide-react';
-import { View } from '../types';
-import RuthChat from './RuthChat';
-import SnowEffect from './SnowEffect';
+import { View } from '../types.ts';
+import RuthChat from './RuthChat.tsx';
+import SnowEffect from './SnowEffect.tsx';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -107,10 +107,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden relative">
-      {/* Subtle Background Aesthetic */}
       <SnowEffect />
 
-      {/* Sidebar */}
       <aside className="w-72 bg-slate-900/95 backdrop-blur-md text-slate-300 hidden md:flex flex-col relative z-20">
         <div className="p-8 border-b border-slate-800">
           <div className="flex items-center gap-3">
@@ -138,7 +136,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
           ))}
         </nav>
 
-        {/* Status Monitoring Section */}
         <div className="px-6 py-5 border-t border-slate-800 space-y-4">
           <div className="bg-slate-800/20 p-4 rounded-2xl border border-slate-700/30">
             <div className="flex items-center gap-2 mb-3 text-indigo-400">
@@ -159,7 +156,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
                     </div>
                   </div>
 
-                  {/* Diagnostic Tooltip */}
                   <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 w-48 bg-slate-800 border border-slate-700 p-4 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none origin-left">
                     <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 w-2 h-2 bg-slate-800 border-l border-b border-slate-700 rotate-45"></div>
                     <div className="space-y-3 relative z-10">
@@ -213,7 +209,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-transparent relative z-10">
         <header className="h-20 border-b border-slate-100 bg-white/70 backdrop-blur-md flex items-center justify-between px-10 shrink-0 relative z-40">
           <div className="flex items-center gap-4">
@@ -240,7 +235,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
                   )}
                 </button>
 
-                {/* Notifications Dropdown */}
                 {showNotifications && (
                   <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-100 rounded-[28px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                     <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
@@ -310,7 +304,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
                    <img src="https://picsum.photos/seed/deep/100" className="rounded-full w-full h-full object-cover" alt="Profile" />
                 </button>
 
-                {/* Profile Dropdown */}
                 {showProfileMenu && (
                   <div className="absolute top-full right-0 mt-3 w-56 bg-white border border-slate-100 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right z-50">
                     <div className="p-2 space-y-1">
@@ -355,7 +348,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
         </main>
       </div>
 
-      {/* Team Members Modal */}
       {activeModal === 'team' && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-xl rounded-[48px] shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-slate-200 p-10">
@@ -401,7 +393,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
         </div>
       )}
 
-      {/* Subscription Details Modal */}
       {activeModal === 'subscription' && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-xl rounded-[48px] shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-slate-200">
@@ -456,7 +447,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
         </div>
       )}
 
-      {/* Global AI Assistant - Ruth */}
       <RuthChat />
     </div>
   );

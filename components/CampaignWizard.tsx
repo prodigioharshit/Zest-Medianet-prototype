@@ -1,8 +1,8 @@
 
 import React, { useState, useRef } from 'react';
 import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, Megaphone, Target, DollarSign, Wand2, Search, Smartphone, Filter, Globe, Upload, Trash2, Layout, Zap, Calendar, Clock, TrendingUp, BarChart3 } from 'lucide-react';
-import { generateAdCopy } from '../services/geminiService';
-import { CampaignFormData, TargetingFilter } from '../types';
+import { generateAdCopy } from '../services/geminiService.ts';
+import { CampaignFormData, TargetingFilter } from '../types.ts';
 
 const goals = [
   { id: 'conversion', title: 'Performance', desc: 'Optimized for high-intent conversion events.', icon: Zap },
@@ -37,7 +37,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
 
   return (
     <div className="max-w-6xl mx-auto py-4">
-      {/* Refined Stepper */}
       <div className="mb-10 px-10">
         <div className="flex justify-between items-center mb-4">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -151,7 +150,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
                   </div>
                 </div>
 
-                {/* Investment Trajectory Summary */}
                 <div className="bg-indigo-950 p-8 rounded-[40px] text-white shadow-xl shadow-indigo-900/10">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-300 border border-indigo-500/30">
@@ -177,16 +175,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
                       <p className="text-xl font-black text-indigo-400 opacity-80">${(formData.dailyBudget * 90).toLocaleString()}</p>
                     </div>
                   </div>
-
-                  <div className="mt-6 pt-6 border-t border-indigo-800/50 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                      <span className="text-[10px] font-black text-indigo-200 uppercase tracking-tighter">Budget Allocation Confirmed</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] font-black text-indigo-400">
-                      <TrendingUp size={12} /> <span className="uppercase tracking-widest">Growth Tracked</span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -206,7 +194,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
                   </div>
                 ))}
                 
-                {/* Visual indicator of reach vs budget */}
                 <div className="p-8 bg-slate-50 rounded-[40px] border border-slate-100 border-dashed">
                   <div className="flex justify-between items-end mb-4">
                     <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Audience Saturation</span>
@@ -227,7 +214,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             <div className="text-center">
               <span className="text-indigo-600 font-bold text-xs uppercase tracking-widest mb-2 block">Step 05 / Deployment</span>
               <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Deployment & Schedule</h2>
-              <p className="text-slate-500 max-w-xl mx-auto">Select host nodes and define when your assets go live.</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -250,7 +236,6 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
               ))}
             </div>
 
-            {/* Scheduling Section */}
             <div className="bg-slate-50 p-8 rounded-[40px] border border-slate-100">
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -310,20 +295,9 @@ const CampaignWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
                 </div>
               )}
             </div>
-
-            <div className="bg-indigo-950 p-6 rounded-3xl text-white flex items-center justify-between border border-indigo-900">
-               <div className="flex items-center gap-4">
-                 <div className="p-3 bg-indigo-800 rounded-xl"><Zap size={20} /></div>
-                 <div>
-                   <p className="font-bold text-sm">Zest Smart Hosting Active</p>
-                   <p className="text-xs text-indigo-300">Auto-shifting budget to highest performing nodes every 30m.</p>
-                 </div>
-               </div>
-            </div>
           </div>
         )}
 
-        {/* Footer Navigation */}
         <div className="mt-auto pt-10 flex justify-between items-center border-t border-slate-100">
           <button
             onClick={prevStep}
@@ -400,7 +374,6 @@ const CreativeStudio: React.FC<{ formData: CampaignFormData, updateData: (data: 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-6">
-          {/* Drag & Drop Content Creator */}
           <div 
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleFileDrop}
@@ -469,20 +442,14 @@ const CreativeStudio: React.FC<{ formData: CampaignFormData, updateData: (data: 
           </div>
         </div>
 
-        {/* Real Time Preview */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <Smartphone size={14} /> Global Device Preview
             </h3>
-            <div className="flex gap-2">
-              <button className="p-1.5 bg-indigo-600 text-white rounded-md shadow-sm"><Smartphone size={14} /></button>
-              <button className="p-1.5 bg-white border border-slate-200 text-slate-400 rounded-md hover:text-indigo-600"><Layout size={14} /></button>
-            </div>
           </div>
 
           <div className="bg-slate-900 rounded-[48px] p-6 shadow-2xl relative overflow-hidden flex flex-col items-center">
-            {/* Mock iPhone UI */}
             <div className="w-[300px] h-[600px] bg-white rounded-[32px] overflow-hidden shadow-inner flex flex-col">
               <div className="h-10 bg-white flex items-center justify-between px-6 pt-2">
                  <span className="text-[10px] font-bold">9:41</span>
@@ -491,7 +458,6 @@ const CreativeStudio: React.FC<{ formData: CampaignFormData, updateData: (data: 
                  </div>
               </div>
               
-              {/* Ad Content */}
               <div className="p-4 border-b border-slate-50">
                  <div className="flex items-center gap-2 mb-3">
                    <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white font-black text-[10px]">
@@ -545,11 +511,9 @@ const AdvancedFilterPanel: React.FC<{ formData: CampaignFormData, updateData: (d
       <div className="text-center">
         <span className="text-indigo-600 font-bold text-xs uppercase tracking-widest mb-2 block">Step 03 / Audience Architecture</span>
         <h2 className="text-4xl font-black text-slate-900 tracking-tight">Advanced Segmentation</h2>
-        <p className="text-slate-500 max-w-xl mx-auto">Deep, use these precision filters to narrow down high-conversion cohorts.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar Filters */}
         <div className="lg:col-span-1 space-y-6 bg-slate-50 p-6 rounded-[32px] border border-slate-100">
           <div className="space-y-4">
              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -564,21 +528,11 @@ const AdvancedFilterPanel: React.FC<{ formData: CampaignFormData, updateData: (d
                ))}
              </div>
           </div>
-          <div className="pt-4 border-t border-slate-200">
-             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Age Bracket</h3>
-             <div className="flex justify-between text-xs font-bold text-slate-600 mb-2">
-               <span>{formData.targeting.ageRange[0]}</span>
-               <span>{formData.targeting.ageRange[1]}</span>
-             </div>
-             <input type="range" className="w-full h-1 bg-slate-300 rounded-full accent-indigo-600" />
-          </div>
         </div>
 
-        {/* Audience Map / Content Creator View */}
         <div className="lg:col-span-3 space-y-8">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-50 shadow-sm relative overflow-hidden">
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-50 rounded-full opacity-50"></div>
                 <h4 className="font-black text-slate-900 mb-4 flex items-center gap-2 relative z-10">
                   <Target className="text-indigo-600" size={20} /> Interest Overlay
                 </h4>
@@ -588,12 +542,10 @@ const AdvancedFilterPanel: React.FC<{ formData: CampaignFormData, updateData: (d
                       {i} <button onClick={() => updateTargeting({ interests: formData.targeting.interests.filter(item => item !== i) })}><Trash2 size={12} /></button>
                     </div>
                   ))}
-                  <button className="px-4 py-2 border-2 border-dashed border-slate-200 text-slate-400 rounded-full text-xs font-bold hover:border-indigo-300 hover:text-indigo-600 transition-colors">+ Add Node</button>
                 </div>
               </div>
 
               <div className="bg-white p-8 rounded-[32px] border-2 border-emerald-50 shadow-sm relative overflow-hidden">
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-emerald-50 rounded-full opacity-50"></div>
                 <h4 className="font-black text-slate-900 mb-4 flex items-center gap-2 relative z-10">
                   <Zap className="text-emerald-600" size={20} /> Intent Behaviors
                 </h4>
@@ -603,7 +555,6 @@ const AdvancedFilterPanel: React.FC<{ formData: CampaignFormData, updateData: (d
                       {b} <button onClick={() => updateTargeting({ behaviors: formData.targeting.behaviors.filter(item => item !== b) })}><Trash2 size={12} /></button>
                     </div>
                   ))}
-                  <button className="px-4 py-2 border-2 border-dashed border-slate-200 text-slate-400 rounded-full text-xs font-bold hover:border-emerald-300 hover:text-emerald-600 transition-colors">+ Add Signal</button>
                 </div>
               </div>
            </div>
@@ -612,20 +563,13 @@ const AdvancedFilterPanel: React.FC<{ formData: CampaignFormData, updateData: (d
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h4 className="text-xl font-black">Estimated Reach Potential</h4>
-                  <p className="text-xs text-indigo-300 uppercase font-bold tracking-widest mt-1">Based on current Filter parameters</p>
                 </div>
                 <div className="text-right">
                   <p className="text-3xl font-black text-emerald-400">12.5M - 15.8M</p>
-                  <p className="text-[10px] text-indigo-400 font-black uppercase">Audience Size Index</p>
                 </div>
               </div>
               <div className="w-full bg-indigo-900/50 rounded-full h-4 overflow-hidden mb-4 border border-indigo-800">
                 <div className="bg-gradient-to-r from-indigo-500 to-emerald-400 h-full w-[70%] rounded-full shadow-lg"></div>
-              </div>
-              <div className="flex justify-between text-[10px] font-bold text-indigo-400 uppercase">
-                <span>Too Narrow</span>
-                <span className="text-emerald-400">Optimal Sweet Spot</span>
-                <span>Too Broad</span>
               </div>
            </div>
         </div>

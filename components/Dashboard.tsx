@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Target, Percent, DollarSign, ArrowUpRight, X, Zap, Sliders, BarChart3, Info, ShieldCheck, ChevronRight } from 'lucide-react';
-import { Campaign } from '../types';
+import { Campaign } from '../types.ts';
 
 const performanceData = [
   { name: 'May 1', reach: 4000, conv: 120 },
@@ -46,7 +46,6 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: 'Total Revenue', value: '$12,450', icon: DollarSign, trend: '+12.5%', color: 'indigo' },
@@ -141,7 +140,6 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Advanced Campaigns Table */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
           <div>
@@ -208,7 +206,6 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Budget Management Overlay */}
       {isBudgetModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-4xl rounded-[48px] shadow-2xl overflow-hidden relative flex flex-col animate-in zoom-in-95 duration-300 border border-slate-200">
@@ -220,7 +217,6 @@ const Dashboard: React.FC = () => {
             </button>
 
             <div className="flex h-full">
-              {/* Left Column: Sliders */}
               <div className="flex-1 p-12 border-r border-slate-100 space-y-10">
                 <div>
                   <h3 className="text-3xl font-black text-slate-900 tracking-tight">Budget Optimizer</h3>
@@ -271,7 +267,6 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Column: Forecasts */}
               <div className="w-[380px] bg-slate-50/50 p-12 flex flex-col">
                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-10">Economic Forecast</h4>
                 
